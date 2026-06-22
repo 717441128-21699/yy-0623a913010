@@ -1,0 +1,112 @@
+/** @type {import('tailwindcss').Config} */
+
+export default {
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    container: {
+      center: true,
+    },
+    extend: {
+      colors: {
+        primary: {
+          50: "#E8F3FF",
+          100: "#BEDAFF",
+          200: "#94BFFF",
+          300: "#6AA3FF",
+          400: "#4080FF",
+          500: "#165DFF",
+          600: "#0E42D2",
+          700: "#0A2BA0",
+          800: "#061D6E",
+          900: "#03103C",
+        },
+        danger: {
+          50: "#FFECE8",
+          100: "#FDCDC5",
+          200: "#FBACA3",
+          300: "#F98B81",
+          400: "#F76560",
+          500: "#F53F3F",
+          600: "#CB2634",
+          700: "#A11229",
+          800: "#77081F",
+          900: "#4D0316",
+        },
+        warning: {
+          50: "#FFF7E8",
+          100: "#FFE8BA",
+          200: "#FFD78C",
+          300: "#FFC55E",
+          400: "#FFB32E",
+          500: "#FF7D00",
+          600: "#CB5600",
+          700: "#993A00",
+          800: "#672300",
+          900: "#3A1400",
+        },
+        caution: {
+          50: "#FFFBE8",
+          100: "#FFF2BA",
+          200: "#FFE88C",
+          300: "#FFDD5E",
+          400: "#FFD12E",
+          500: "#FFAA00",
+          600: "#CB7F00",
+          700: "#995900",
+          800: "#673B00",
+          900: "#3A2100",
+        },
+        success: {
+          50: "#E8FFEA",
+          100: "#BCF3C3",
+          200: "#90E89C",
+          300: "#64D976",
+          400: "#3AC754",
+          500: "#00B42A",
+          600: "#009A29",
+          700: "#007D26",
+          800: "#005F20",
+          900: "#004219",
+        },
+        neutral: {
+          50: "#F7F8FA",
+          100: "#E5E6EB",
+          200: "#C9CDD4",
+          300: "#86909C",
+          400: "#4E5969",
+          500: "#1D2129",
+        },
+      },
+      fontFamily: {
+        sans: [
+          "PingFang SC",
+          "Microsoft YaHei",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
+        mono: ["SF Mono", "Monaco", "Consolas", "monospace"],
+      },
+      boxShadow: {
+        card: "0 2px 8px 0 rgba(0, 0, 0, 0.06)",
+        "card-hover": "0 4px 16px 0 rgba(0, 0, 0, 0.1)",
+      },
+      animation: {
+        "fade-in": "fadeIn 0.3s ease-in-out",
+        "slide-up": "slideUp 0.3s ease-out",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slideUp: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

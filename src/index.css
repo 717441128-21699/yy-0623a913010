@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1D2129;
+  background-color: #F7F8FA;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .section-card {
+    @apply bg-white rounded-lg shadow-card p-4 transition-all duration-300 hover:shadow-card-hover;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors text-sm font-medium;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-white border border-neutral-200 text-neutral-500 rounded hover:bg-neutral-50 transition-colors text-sm font-medium;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 bg-danger-500 text-white rounded hover:bg-danger-600 transition-colors text-sm font-medium;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-neutral-200 rounded focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-danger {
+    @apply bg-danger-50 text-danger-500;
+  }
+
+  .badge-warning {
+    @apply bg-warning-50 text-warning-500;
+  }
+
+  .badge-caution {
+    @apply bg-caution-50 text-caution-500;
+  }
+
+  .badge-success {
+    @apply bg-success-50 text-success-500;
+  }
+
+  .badge-primary {
+    @apply bg-primary-50 text-primary-500;
+  }
+
+  .table-header {
+    @apply bg-neutral-50 text-neutral-400 text-xs font-medium uppercase tracking-wider;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm text-neutral-500;
+  }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #c9cdd4;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #86909c;
+}
