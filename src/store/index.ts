@@ -131,7 +131,11 @@ export const useAppStore = create<AppState>()(
         
         set((state) => ({
           consumptionRecords: state.consumptionRecords.map((r) =>
-            r.id === id ? { ...r, ...updates } : r
+            r.id === id ? { 
+              ...r, 
+              ...updates,
+              updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
+            } : r
           ),
         }));
         

@@ -32,7 +32,11 @@ export interface ConsumptionRecord {
   status: ConsumptionStatus;
   projectType: string;
   rejectionReason?: string;
+  followUpDate?: string;
+  alternativeProject?: string;
+  followUpRemark?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface MatchedProject {
@@ -102,6 +106,7 @@ export interface PressureStats {
   attentionCount: number;
   dailyAverageNeed: number;
   todayConsumed: number;
+  todayAppointments: number;
   todayGoal: number;
   completionRate: number;
 }

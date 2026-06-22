@@ -32,11 +32,11 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ data, isSelected, onCl
         aspect-square p-1 relative cursor-pointer group rounded-lg transition-all
         ${isToday ? 'bg-primary-50' : ''}
         ${isSelected ? 'bg-primary-100 ring-2 ring-primary-500' : ''}
-        ${hasItems && !isSelected ? 'hover:bg-neutral-50' : ''}
+        ${!isSelected ? 'hover:bg-neutral-100' : ''}
       `}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
-      onClick={() => hasItems && onClick?.()}
+      onClick={onClick}
     >
       <div className="flex items-start justify-between">
         <span className={`

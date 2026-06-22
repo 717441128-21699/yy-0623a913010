@@ -5,6 +5,8 @@ import { ExpiryCalendar } from '@/components/calendar/ExpiryCalendar';
 import { MatchArea } from '@/components/match/MatchArea';
 import { ScriptArea } from '@/components/script/ScriptArea';
 import { TrackingArea } from '@/components/tracking/TrackingArea';
+import { TodayWorkbench } from '@/components/dashboard/TodayWorkbench';
+import { CancelledPool } from '@/components/tracking/CancelledPool';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { Calendar } from 'lucide-react';
 import { useAppStore } from '@/store';
@@ -32,9 +34,13 @@ const App: React.FC = () => {
             <SectionCard title="效期日历" icon={<Calendar className="w-5 h-5" />}>
               <ExpiryCalendar />
             </SectionCard>
+
+            <CancelledPool />
           </div>
           
           <div className="lg:col-span-7 space-y-4">
+            <TodayWorkbench />
+
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <MatchArea />
               <ScriptArea />

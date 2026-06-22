@@ -88,7 +88,11 @@ export function calculatePressureStats(
   }
 
   const todayConsumed = consumptionRecords.filter(
-    r => r.status === 'completed' && dayjs(r.createdAt).format('YYYY-MM-DD') === today
+    r => r.status === 'completed' && r.appointmentDate === today
+  ).length;
+
+  const todayAppointments = consumptionRecords.filter(
+    r => r.appointmentDate === today && r.status !== 'cancelled'
   ).length;
 
   const completionRate = todayGoal > 0 ? Math.min(100, Math.round((todayConsumed / todayGoal) * 100)) : 0;
@@ -100,6 +104,7 @@ export function calculatePressureStats(
     attentionCount,
     dailyAverageNeed,
     todayConsumed,
+    todayAppointments,
     todayGoal,
     completionRate,
   };

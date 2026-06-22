@@ -98,7 +98,7 @@ export const ExpiryCalendar: React.FC = () => {
     setCurrentMonth(dayjs().format('YYYY-MM'));
   };
 
-  const handleDayClick = (date: string, items: InventoryItem[]) => {
+  const handleDayClick = (date: string) => {
     if (selectedCalendarDate === date) {
       setSelectedCalendarDate(null);
     } else {
@@ -117,7 +117,10 @@ export const ExpiryCalendar: React.FC = () => {
       
       return selectedDate.isSame(suggestedDate, 'day') || 
              selectedDate.isSame(expiryDate, 'day') ||
-             (selectedDate.isAfter(suggestedDate) && selectedDate.isBefore(expiryDate));
+             selectedDate.isSame(suggestedDate.subtract(7, 'day'), 'day') ||
+             selectedDate.isSame(suggestedDate.subtract(3, 'day'), 'day') ||
+             (selectedDate.isAfter(suggestedDate.subtract(7, 'day')) && 
+              selectedDate.isBefore(expiryDate.add(1, 'day')));
     });
     
     const dayRecords = consumptionRecords.filter(r => 
@@ -201,7 +204,7 @@ export const ExpiryCalendar: React.FC = () => {
             key={index} 
             data={dayData}
             isSelected={selectedCalendarDate === dayData.date}
-            onClick={() => handleDayClick(dayData.date, dayData.items)}
+            onClick={() => handleDayClick(dayData.date)}
           />
         ))}
       </div>
