@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-reac
 import { useAppStore } from '@/store';
 import { CalendarDay } from './CalendarDay';
 import { PressurePanel } from './PressurePanel';
+import { CalendarSidebar } from './CalendarSidebar';
 import { calculatePressureStats } from '@/utils/expiryCalculator';
 import type { CalendarDayData, InventoryItem, UrgencyLevel } from '@/types';
 import dayjs from 'dayjs';
@@ -18,7 +19,15 @@ const urgencyPriority: Record<UrgencyLevel, number> = {
 };
 
 export const ExpiryCalendar: React.FC = () => {
-  const { inventory, consumptionRecords, dailyGoal, currentMonth, setCurrentMonth } = useAppStore();
+  const { 
+    inventory, 
+    consumptionRecords, 
+    dailyGoal, 
+    currentMonth, 
+    setCurrentMonth,
+    selectedCalendarDate,
+    setSelectedCalendarDate
+  } = useAppStore();
 
   const stats = useMemo(() => 
     calculatePressureStats(inventory, consumptionRecords, dailyGoal),
@@ -42,9 +51,17 @@ export const ExpiryCalendar: React.FC = () => {
       const isToday = dateStr === today;
       
       const dayItems = inventory.filter(item => {
+        if (item.remainingQuantity <= 0) return false;
+        
         const suggestedDate = dayjs(item.suggestedConsumeDate);
-        return current.isSame(suggestedDate, 'day') || 
-               (isCurrentMonth && current.isAfter(suggestedDate) && item.remainingQuantity > 0);
+        const expiryDate = dayjs(item.expiryDate);
+        
+        const isSuggestedDate = current.isSame(suggestedDate, 'day');
+        const isExpiryDate = current.isSame(expiryDate, 'day');
+        const isMilestoneDate = current.isSame(suggestedDate.subtract(7, 'day'), 'day') ||
+                                current.isSame(suggestedDate.subtract(3, 'day'), 'day');
+        
+        return isSuggestedDate || isExpiryDate || isMilestoneDate;
       });
       
       let maxUrgency: UrgencyLevel | null = null;
@@ -81,9 +98,38 @@ export const ExpiryCalendar: React.FC = () => {
     setCurrentMonth(dayjs().format('YYYY-MM'));
   };
 
-  const handleDayClick = (items: InventoryItem[]) => {
-    console.log('Day clicked:', items);
+  const handleDayClick = (date: string, items: InventoryItem[]) => {
+    if (selectedCalendarDate === date) {
+      setSelectedCalendarDate(null);
+    } else {
+      setSelectedCalendarDate(date);
+    }
   };
+
+  const sidebarData = useMemo(() => {
+    if (!selectedCalendarDate) return null;
+    
+    const dayItems = inventory.filter(item => {
+      if (item.remainingQuantity <= 0) return false;
+      const suggestedDate = dayjs(item.suggestedConsumeDate);
+      const expiryDate = dayjs(item.expiryDate);
+      const selectedDate = dayjs(selectedCalendarDate);
+      
+      return selectedDate.isSame(suggestedDate, 'day') || 
+             selectedDate.isSame(expiryDate, 'day') ||
+             (selectedDate.isAfter(suggestedDate) && selectedDate.isBefore(expiryDate));
+    });
+    
+    const dayRecords = consumptionRecords.filter(r => 
+      dayjs(r.appointmentDate).isSame(selectedCalendarDate, 'day')
+    );
+    
+    return {
+      date: selectedCalendarDate,
+      items: dayItems,
+      records: dayRecords
+    };
+  }, [selectedCalendarDate, inventory, consumptionRecords]);
 
   return (
     <div className="space-y-4">
@@ -154,7 +200,8 @@ export const ExpiryCalendar: React.FC = () => {
           <CalendarDay 
             key={index} 
             data={dayData}
-            onClick={handleDayClick}
+            isSelected={selectedCalendarDate === dayData.date}
+            onClick={() => handleDayClick(dayData.date, dayData.items)}
           />
         ))}
       </div>
@@ -162,6 +209,22 @@ export const ExpiryCalendar: React.FC = () => {
       <div className="pt-2 border-t border-neutral-100">
         <PressurePanel stats={stats} />
       </div>
+
+      {sidebarData && (
+        <CalendarSidebar
+          date={sidebarData.date}
+          items={sidebarData.items}
+          records={sidebarData.records}
+          onClose={() => setSelectedCalendarDate(null)}
+        />
+      )}
+
+      {sidebarData && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-30"
+          onClick={() => setSelectedCalendarDate(null)}
+        />
+      )}
     </div>
   );
 };

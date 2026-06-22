@@ -42,6 +42,23 @@ export interface MatchedProject {
   suggestedDosage: string;
   suitableMolecularTypes: MolecularType[];
   description: string;
+  notRecommendedScenarios: string[];
+  keyPromotionPoints: string[];
+  combinationPlans: CombinationPlan[];
+}
+
+export interface CombinationPlan {
+  id: string;
+  name: string;
+  description: string;
+  benefit: string;
+  suitableCustomerTypes: string[];
+}
+
+export interface CalendarSidebarData {
+  date: string;
+  items: InventoryItem[];
+  records: ConsumptionRecord[];
 }
 
 export interface ScriptCard {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Zap, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Zap, Users, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles } from 'lucide-react';
 import type { InventoryItem } from '@/types';
 import { getUrgencyBadgeClass, getUrgencyLabel } from '@/utils/expiryCalculator';
 import { matchProjectsForItem, getMolecularTypeLabel, getMolecularTypeColor, comboProjects } from '@/utils/projectMatcher';
@@ -74,40 +74,113 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
 
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-neutral-100 animate-fade-in">
-          <div className="pt-4">
-            <p className="text-xs font-medium text-neutral-500 mb-3 flex items-center gap-1">
-              <Users className="w-3.5 h-3.5" />
-              适用项目推荐
-            </p>
-            
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {matchedProjects.map((project) => (
-                <div 
-                  key={project.id}
-                  className="p-3 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors"
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-neutral-500">
-                      {project.name}
-                    </span>
-                    <span className="text-xs text-primary-500">
-                      {project.area}
-                    </span>
+          <div className="pt-4 space-y-4">
+            <div>
+              <p className="text-xs font-medium text-neutral-500 mb-3 flex items-center gap-1">
+                <Users className="w-3.5 h-3.5" />
+                适用项目推荐
+              </p>
+              
+              <div className="space-y-2">
+                {matchedProjects.slice(0, 4).map((project) => (
+                  <div 
+                    key={project.id}
+                    className="p-3 bg-neutral-50 rounded-lg hover:bg-primary-50 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-neutral-500">
+                          {project.name}
+                        </span>
+                        <span className="text-xs text-primary-500 bg-primary-50 px-1.5 py-0.5 rounded">
+                          {project.area}
+                        </span>
+                      </div>
+                      <span className="text-xs text-primary-500 font-medium">
+                        {project.suggestedDosage}
+                      </span>
+                    </div>
+                    
+                    <p className="text-xs text-neutral-400 mb-2">
+                      {project.description}
+                    </p>
+
+                    {project.keyPromotionPoints.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-xs font-medium text-success-600 mb-1 flex items-center gap-1">
+                          <ThumbsUp className="w-3 h-3" />
+                          主推要点
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {project.keyPromotionPoints.slice(0, 3).map((point, idx) => (
+                            <span key={idx} className="text-xs px-1.5 py-0.5 bg-success-50 text-success-600 rounded">
+                              {point}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {project.notRecommendedScenarios.length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-danger-600 mb-1 flex items-center gap-1">
+                          <ThumbsDown className="w-3 h-3" />
+                          不建议场景
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {project.notRecommendedScenarios.slice(0, 3).map((scenario, idx) => (
+                            <span key={idx} className="text-xs px-1.5 py-0.5 bg-danger-50 text-danger-600 rounded">
+                              {scenario}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-neutral-400 mb-1">
-                    {project.description}
-                  </p>
-                  <p className="text-xs text-primary-500 font-medium">
-                    建议用量：{project.suggestedDosage}
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+
+            {matchedProjects.some(p => p.combinationPlans.length > 0) && (
+              <div>
+                <p className="text-xs font-medium text-neutral-500 mb-3 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-warning-500" />
+                  高客单价组合方案
+                </p>
+                <div className="space-y-2">
+                  {Array.from(new Set(matchedProjects.flatMap(p => p.combinationPlans).map(c => c.id)))
+                    .slice(0, 3)
+                    .map(id => {
+                      const combo = matchedProjects.flatMap(p => p.combinationPlans).find(c => c.id === id);
+                      if (!combo) return null;
+                      return (
+                        <div key={combo.id} className="p-3 bg-warning-50 rounded-lg border border-warning-100">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-sm font-medium text-warning-700">{combo.name}</span>
+                            <span className="text-xs text-warning-600 bg-white px-1.5 py-0.5 rounded">
+                              {combo.benefit}
+                            </span>
+                          </div>
+                          <p className="text-xs text-neutral-500 mb-1">{combo.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {combo.suitableCustomerTypes.map((type, idx) => (
+                              <span key={idx} className="text-xs px-1.5 py-0.5 bg-white text-warning-600 rounded">
+                                {type}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
             {isUrgent && (
               <div className="p-3 bg-warning-50 rounded-lg">
-                <p className="text-xs font-medium text-warning-600 mb-2">
-                  临期联合项目推荐（提升客单价）
+                <p className="text-xs font-medium text-warning-600 mb-2 flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  临期特别建议
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {comboProjects.map((combo) => (

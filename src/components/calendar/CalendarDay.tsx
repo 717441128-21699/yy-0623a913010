@@ -5,10 +5,11 @@ import { getMolecularTypeLabel } from '@/utils/projectMatcher';
 
 interface CalendarDayProps {
   data: CalendarDayData;
-  onClick?: (items: InventoryItem[]) => void;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
-export const CalendarDay: React.FC<CalendarDayProps> = ({ data, onClick }) => {
+export const CalendarDay: React.FC<CalendarDayProps> = ({ data, isSelected, onClick }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   
   const { date, day, isCurrentMonth, isToday, items, maxUrgency } = data;
@@ -28,13 +29,14 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({ data, onClick }) => {
   return (
     <div 
       className={`
-        aspect-square p-1 relative cursor-pointer group
-        ${isToday ? 'bg-primary-50 rounded-lg' : ''}
-        ${hasItems ? 'hover:bg-neutral-50 rounded-lg' : ''}
+        aspect-square p-1 relative cursor-pointer group rounded-lg transition-all
+        ${isToday ? 'bg-primary-50' : ''}
+        ${isSelected ? 'bg-primary-100 ring-2 ring-primary-500' : ''}
+        ${hasItems && !isSelected ? 'hover:bg-neutral-50' : ''}
       `}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
-      onClick={() => hasItems && onClick?.(items)}
+      onClick={() => hasItems && onClick?.()}
     >
       <div className="flex items-start justify-between">
         <span className={`

@@ -40,7 +40,7 @@ export const StatusBar: React.FC = () => {
       alert('暂无数据可导出');
       return;
     }
-    await exportActionListPDF(inventory, stats);
+    await exportActionListPDF(inventory, consumptionRecords, stats);
   };
 
   const handleClearData = () => {

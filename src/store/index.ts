@@ -22,6 +22,7 @@ interface AppState {
   dailyGoal: number;
   showPurchasePrice: boolean;
   currentMonth: string;
+  selectedCalendarDate: string | null;
   
   parsedHeaders: string[];
   parsedRows: ParsedExcelRow[];
@@ -38,6 +39,7 @@ interface AppState {
   setDailyGoal: (goal: number) => void;
   togglePriceVisibility: () => void;
   setCurrentMonth: (month: string) => void;
+  setSelectedCalendarDate: (date: string | null) => void;
   markTreatment: (id: string, treatmentType: TreatmentType, remark: string) => void;
   
   setParsedData: (headers: string[], rows: ParsedExcelRow[]) => void;
@@ -68,6 +70,7 @@ export const useAppStore = create<AppState>()(
       dailyGoal: 5,
       showPurchasePrice: true,
       currentMonth: dayjs().format('YYYY-MM'),
+      selectedCalendarDate: null,
       
       parsedHeaders: [],
       parsedRows: [],
@@ -113,7 +116,7 @@ export const useAppStore = create<AppState>()(
           const item = get().inventory.find(i => i.id === record.inventoryId);
           if (item && item.remainingQuantity > 0) {
             get().updateInventory(record.inventoryId, {
-              remainingQuantity: item.remainingQuantity - 1,
+              remainingQuantity: Math.max(0, item.remainingQuantity - 1),
             });
           }
         }
@@ -121,6 +124,10 @@ export const useAppStore = create<AppState>()(
 
       updateConsumption: (id, updates) => {
         const oldRecord = get().consumptionRecords.find(r => r.id === id);
+        if (!oldRecord) return;
+        
+        const newStatus = updates.status;
+        const oldStatus = oldRecord.status;
         
         set((state) => ({
           consumptionRecords: state.consumptionRecords.map((r) =>
@@ -128,20 +135,41 @@ export const useAppStore = create<AppState>()(
           ),
         }));
         
-        if (oldRecord && updates.status === 'completed' && oldRecord.status !== 'completed') {
+        if (newStatus !== undefined && newStatus !== oldStatus) {
           const item = get().inventory.find(i => i.id === oldRecord.inventoryId);
-          if (item && item.remainingQuantity > 0) {
+          if (!item) return;
+          
+          if (newStatus === 'completed' && oldStatus !== 'completed') {
+            if (item.remainingQuantity > 0) {
+              get().updateInventory(oldRecord.inventoryId, {
+                remainingQuantity: Math.max(0, item.remainingQuantity - 1),
+              });
+            }
+          }
+          
+          if (oldStatus === 'completed' && newStatus !== 'completed') {
             get().updateInventory(oldRecord.inventoryId, {
-              remainingQuantity: item.remainingQuantity - 1,
+              remainingQuantity: item.remainingQuantity + 1,
             });
           }
         }
       },
 
       deleteConsumption: (id) => {
+        const record = get().consumptionRecords.find(r => r.id === id);
+        
         set((state) => ({
           consumptionRecords: state.consumptionRecords.filter((r) => r.id !== id),
         }));
+        
+        if (record && record.status === 'completed') {
+          const item = get().inventory.find(i => i.id === record.inventoryId);
+          if (item) {
+            get().updateInventory(record.inventoryId, {
+              remainingQuantity: item.remainingQuantity + 1,
+            });
+          }
+        }
       },
 
       setDailyGoal: (goal) => {
@@ -154,6 +182,10 @@ export const useAppStore = create<AppState>()(
 
       setCurrentMonth: (month) => {
         set({ currentMonth: month });
+      },
+
+      setSelectedCalendarDate: (date) => {
+        set({ selectedCalendarDate: date });
       },
 
       markTreatment: (id, treatmentType, remark) => {
